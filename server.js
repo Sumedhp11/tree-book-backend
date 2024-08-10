@@ -10,6 +10,9 @@ const PORT = process.env.PORT || 8080;
 server.use(cors());
 server.use(express.json());
 
+server.get("/", (_, res) => {
+  res.send("Base url For Book Tree");
+});
 server.use("/api/trees", treesRoutes);
 
 server.listen(PORT, () => {
