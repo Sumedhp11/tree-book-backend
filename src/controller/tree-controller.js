@@ -17,8 +17,6 @@ const addNewTree = async (req, res) => {
       name,
       geolocation,
       age,
-      soil_type,
-      kb_link,
       tree_image: url,
     };
 
