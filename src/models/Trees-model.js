@@ -20,6 +20,10 @@ const TreesSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    added_by: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );

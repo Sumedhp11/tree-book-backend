@@ -1,9 +1,9 @@
 import Trees from "../models/Trees-model.js";
 import { uploadFileToCloudinary } from "../utils/cloudinary.js";
 const addNewTree = async (req, res) => {
-  const { name, geolocation, age, soil_type, kb_link } = req.body;
+  const { name, geolocation, age, added_by } = req.body;
 
-  if (!name || !geolocation || !kb_link || !req.file) {
+  if (!name || !geolocation || !req.file || !added_by) {
     return res.status(404).json({
       success: false,
       message: "Necessary Tree data not Provided",
