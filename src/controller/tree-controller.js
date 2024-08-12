@@ -18,6 +18,7 @@ const addNewTree = async (req, res) => {
       geolocation,
       age,
       tree_image: url,
+      added_by,
     };
 
     const alreadyTree = await Trees.findOne({
