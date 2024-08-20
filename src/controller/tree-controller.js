@@ -1,3 +1,4 @@
+import EditRequest from "../models/EditRequests-model.js";
 import Trees from "../models/Trees-model.js";
 import { uploadFileToCloudinary } from "../utils/cloudinary.js";
 const addNewTree = async (req, res) => {
@@ -84,8 +85,7 @@ const getTreeData = async (req, res) => {
     });
   }
 };
-
-const addTreeFromBackend = async (req, res, next) => {
+const addTreeFromBackend = async (req, res) => {
   const generateRandomOffset = () => (Math.random() - 0.5) * 0.005;
 
   const treesData = [
@@ -345,4 +345,54 @@ const addTreeFromBackend = async (req, res, next) => {
   }
 };
 
-export { addNewTree, getTreeData, addTreeFromBackend };
+const RequestupdateTree = async (req, res) => {
+  try {
+    const { tree_id, name, soil_type, age, proposed_by } = req.body;
+    if (!tree_id) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Tree ID is required" });
+    }
+
+    // Fetch old tree data
+    const oldData = await Trees.findById(tree_id);
+    if (!oldData) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Tree not found" });
+    }
+
+    const proposedData = {
+      name: name ? name : oldData.name,
+      geolocation: oldData.geolocation,
+      tree_image: oldData.tree_image,
+      added_by: oldData.added_by,
+      soil_type: soil_type ? soil_type : oldData.soil_type,
+      age: age ? age : oldData.age,
+    };
+
+    // Create edit request object
+    const editRequestObject = {
+      request_type: "tree-edit",
+      original_data: oldData.toObject(),
+      proposed_data: proposedData,
+      status: "pending",
+      proposed_by,
+    };
+
+    // Create new edit request
+    await EditRequest.create(editRequestObject);
+
+    return res.status(200).json({
+      success: true,
+      message: `Edit request for ${oldData.name} sent to admin successfully.`,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
+export default RequestupdateTree;
+
+export { addNewTree, getTreeData, addTreeFromBackend, RequestupdateTree };
