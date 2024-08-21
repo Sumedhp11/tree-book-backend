@@ -9,6 +9,7 @@ configDotenv();
 ConnectDb();
 const server = express();
 const PORT = process.env.PORT || 8080;
+server.use(cookieParser());
 server.use(
   cors({
     origin: ["http://localhost:5173"],
@@ -16,7 +17,6 @@ server.use(
   })
 );
 server.use(express.json());
-server.use(cookieParser());
 
 server.get("/", (_, res) => {
   res.send("Base url For Book Tree");

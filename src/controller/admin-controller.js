@@ -51,7 +51,6 @@ const Adminlogin = async (req, res) => {
       expiresIn: "7d",
     });
 
-    // Generate access token
     const accessToken = jwt.sign({ id: admin._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
@@ -59,18 +58,19 @@ const Adminlogin = async (req, res) => {
     admin.refreshToken = refreshToken;
     await admin.save();
 
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "Strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
-    return res.status(200).json({
-      success: true,
-      message: "Login successful",
-      token: accessToken,
-    });
+    return res
+      .cookie("refreshToken", refreshToken, {
+        sameSite: "None",
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      })
+      .status(200)
+      .json({
+        success: true,
+        message: "Login successful",
+        token: accessToken,
+      });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
@@ -81,7 +81,9 @@ const Adminlogin = async (req, res) => {
 };
 const refreshAccessToken = async (req, res) => {
   try {
-    const refreshToken = req.cookies.refreshToken;
+    const refreshToken = req.cookies["refreshToken"];
+    console.log(refreshToken, 85);
+    console.log(req.cookies, 86);
 
     if (!refreshToken) {
       return res.status(401).json({

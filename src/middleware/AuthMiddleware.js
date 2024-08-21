@@ -23,7 +23,7 @@ const verifyAccessToken = async (req, res, next) => {
         });
       }
 
-      req.user = decoded; // Attach user information to request
+      req.user = decoded;
       next();
     });
   } catch (error) {

@@ -15,7 +15,7 @@ const router = Router();
 router.post("/register", AdminRegister);
 router.post("/login", Adminlogin);
 
-router.post("/refresh-token", refreshAccessToken);
+router.get("/refresh-token", refreshAccessToken);
 
 router.use(verifyAccessToken);
 
