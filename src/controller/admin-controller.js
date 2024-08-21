@@ -1,0 +1,198 @@
+import AdminUser from "../models/admin-model.js";
+import bcrypt from "bcryptjs";
+import { configDotenv } from "dotenv";
+import jwt from "jsonwebtoken";
+import Trees from "../models/Trees-model.js";
+import EditRequest from "../models/EditRequests-model.js";
+configDotenv();
+const AdminRegister = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newAdmin = new AdminUser({
+      email,
+      password: hashedPassword,
+    });
+    await newAdmin.save();
+    return res.status(201).json({
+      success: true,
+      message: "Admin registered successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+};
+
+const Adminlogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const admin = await AdminUser.findOne({ email });
+    if (!admin) {
+      return res.status(404).json({
+        success: false,
+        message: "Admin not found",
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, admin.password);
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid credentials",
+      });
+    }
+
+    const refreshToken = jwt.sign({ id: admin._id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+
+    // Generate access token
+    const accessToken = jwt.sign({ id: admin._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    admin.refreshToken = refreshToken;
+    await admin.save();
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Login successful",
+      token: accessToken,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+};
+
+const getAllTrees = async (req, res) => {
+  try {
+    const trees = await Trees.find();
+    return res.status(200).json({
+      success: true,
+      trees,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+};
+
+const updateTree = async (req, res) => {
+  try {
+    const { treeId } = req.params;
+    const updateData = req.body;
+
+    const updatedTree = await TreeModel.findByIdAndUpdate(treeId, updateData, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updatedTree) {
+      return res.status(404).json({
+        success: false,
+        message: "Tree not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Tree updated successfully",
+      data: updatedTree,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+};
+
+const getAllEditRequests = async (req, res) => {
+  try {
+    const editRequests = await EditRequest.find();
+    return res.status(200).json({
+      success: true,
+      editRequests,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+};
+
+const ChangeEditRequestStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const editrequest = await EditRequest.findById(id);
+    if (!editrequest) {
+      return res.status(404).json({
+        success: false,
+        message: "Edit request not found",
+      });
+    }
+
+    editrequest.status = status;
+    await editrequest.save();
+
+    if (status === "approved" && editrequest.request_type === "tree-edit") {
+      const { original_data, proposed_data } = editrequest;
+
+      const tree = await Trees.findById(original_data._id);
+      if (!tree) {
+        return res.status(404).json({
+          success: false,
+          message: "Tree not found",
+        });
+      }
+
+      Object.assign(tree, proposed_data);
+      await tree.save();
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Edit request status updated successfully",
+      data: editrequest,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+};
+
+export {
+  Adminlogin,
+  AdminRegister,
+  getAllTrees,
+  updateTree,
+  getAllEditRequests,
+  ChangeEditRequestStatus,
+};
