@@ -9,7 +9,11 @@ configDotenv();
 ConnectDb();
 const server = express();
 const PORT = process.env.PORT || 8080;
-server.use(cors());
+server.use(
+  cors({
+    credentials: true,
+  })
+);
 server.use(express.json());
 server.use(cookieParser());
 

@@ -371,7 +371,6 @@ const RequestupdateTree = async (req, res) => {
       age: age ? age : oldData.age,
     };
 
-    // Create edit request object
     const editRequestObject = {
       request_type: "tree-edit",
       original_data: oldData.toObject(),
@@ -380,7 +379,6 @@ const RequestupdateTree = async (req, res) => {
       proposed_by,
     };
 
-    // Create new edit request
     await EditRequest.create(editRequestObject);
 
     return res.status(200).json({
