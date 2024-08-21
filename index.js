@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 8080;
 server.use(cookieParser());
 server.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: ["http://localhost:5173","https://treebook.vercel.app"],
     credentials: true,
   })
 );
