@@ -1,7 +1,9 @@
 import { configDotenv } from "dotenv";
 import jwt from "jsonwebtoken";
+
 configDotenv();
-const verifyAndRefreshToken = async (req, res, next) => {
+
+const verifyAccessToken = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer")) {
@@ -14,49 +16,15 @@ const verifyAndRefreshToken = async (req, res, next) => {
     const accessToken = authHeader.split(" ")[1];
 
     jwt.verify(accessToken, process.env.JWT_SECRET, (err, decoded) => {
-      if (err && err.name === "TokenExpiredError") {
-        const refreshToken = req.cookies.refreshToken;
-        if (!refreshToken) {
-          return res.status(401).json({
-            success: false,
-            message: "Refresh token missing",
-          });
-        }
-
-        jwt.verify(
-          refreshToken,
-          process.env.JWT_SECRET,
-          (err, decodedRefresh) => {
-            if (err) {
-              return res.status(403).json({
-                success: false,
-                message: "Invalid or expired refresh token",
-              });
-            }
-
-            const newAccessToken = jwt.sign(
-              { id: decodedRefresh.id },
-              process.env.JWT_SECRET,
-              {
-                expiresIn: "1h",
-              }
-            );
-
-            return res.status(200).json({
-              success: true,
-              message: "Access token refreshed",
-              accessToken: newAccessToken,
-            });
-          }
-        );
-      } else if (err) {
+      if (err) {
         return res.status(401).json({
           success: false,
-          message: "Invalid access token",
+          message: "Invalid or expired access token",
         });
-      } else {
-        next();
       }
+
+      req.user = decoded; // Attach user information to request
+      next();
     });
   } catch (error) {
     console.error(error);
@@ -67,4 +35,4 @@ const verifyAndRefreshToken = async (req, res, next) => {
   }
 };
 
-export { verifyAndRefreshToken };
+export { verifyAccessToken };

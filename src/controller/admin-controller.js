@@ -79,6 +79,45 @@ const Adminlogin = async (req, res) => {
     });
   }
 };
+const refreshAccessToken = async (req, res) => {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!refreshToken) {
+      return res.status(401).json({
+        success: false,
+        message: "Refresh token missing",
+      });
+    }
+
+    jwt.verify(refreshToken, process.env.JWT_SECRET, (err, decodedRefresh) => {
+      if (err) {
+        return res.status(403).json({
+          success: false,
+          message: "Invalid or expired refresh token",
+        });
+      }
+
+      const newAccessToken = jwt.sign(
+        { id: decodedRefresh.id },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" }
+      );
+
+      return res.status(200).json({
+        success: true,
+        message: "Access token refreshed",
+        accessToken: newAccessToken,
+      });
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+};
 
 const getAllTrees = async (req, res) => {
   try {
@@ -191,6 +230,7 @@ const ChangeEditRequestStatus = async (req, res) => {
 export {
   Adminlogin,
   AdminRegister,
+  refreshAccessToken,
   getAllTrees,
   updateTree,
   getAllEditRequests,
