@@ -52,20 +52,24 @@ const Adminlogin = async (req, res) => {
     });
 
     const accessToken = jwt.sign({ id: admin._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
+      expiresIn: "15s",
     });
 
     admin.refreshToken = refreshToken;
     await admin.save();
 
+    const isProduction = process.env.NODE_ENV === "production";
+    console.log(isProduction, 62);
+
     return res
-      .cookie("refreshToken", refreshToken, {
-        sameSite: "None",
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-      })
       .status(200)
+      .cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? "None" : "Lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        path: "/",
+      })
       .json({
         success: true,
         message: "Login successful",
@@ -79,6 +83,7 @@ const Adminlogin = async (req, res) => {
     });
   }
 };
+
 const refreshAccessToken = async (req, res) => {
   try {
     const refreshToken = req.cookies["refreshToken"];
@@ -123,6 +128,8 @@ const refreshAccessToken = async (req, res) => {
 
 const getAllTrees = async (req, res) => {
   try {
+    console.log(req.cookies, 130);
+
     const trees = await Trees.find();
     return res.status(200).json({
       success: true,

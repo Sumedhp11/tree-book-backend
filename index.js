@@ -9,17 +9,21 @@ configDotenv();
 ConnectDb();
 const server = express();
 const PORT = process.env.PORT || 8080;
-server.use(cookieParser());
+
 server.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: ["http://localhost:5173", "https://treebook.vercel.app"],
     credentials: true,
   })
 );
 server.use(express.json());
-
+server.use(cookieParser());
 server.get("/", (_, res) => {
   res.send("Base url For Book Tree");
+});
+server.use((req, res, next) => {
+  console.log("Cookies: ", req.cookies);
+  next();
 });
 server.use("/api/trees", treesRoutes);
 server.use("/api/admin", adminRoutes);
