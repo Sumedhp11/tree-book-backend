@@ -124,7 +124,12 @@ const getAllTrees = async (req, res) => {
 const updateTree = async (req, res) => {
   try {
     const { treeId } = req.params;
-    const updateData = req.body;
+    const { name, age, soil_type } = req.body;
+
+    const updateData = {};
+    if (name) updateData.name = name;
+    if (age) updateData.age = age;
+    if (soil_type) updateData.soil_type = soil_type;
 
     const updatedTree = await Trees.findByIdAndUpdate(treeId, updateData, {
       new: true,
