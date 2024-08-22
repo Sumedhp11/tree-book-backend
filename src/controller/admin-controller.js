@@ -126,7 +126,7 @@ const updateTree = async (req, res) => {
     const { treeId } = req.params;
     const updateData = req.body;
 
-    const updatedTree = await TreeModel.findByIdAndUpdate(treeId, updateData, {
+    const updatedTree = await Trees.findByIdAndUpdate(treeId, updateData, {
       new: true,
       runValidators: true,
     });
