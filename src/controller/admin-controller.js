@@ -131,6 +131,8 @@ const updateTree = async (req, res) => {
     if (age) updateData.age = age;
     if (soil_type) updateData.soil_type = soil_type;
 
+    console.log(updateData, 134);
+
     const updatedTree = await Trees.findByIdAndUpdate(treeId, updateData, {
       new: true,
       runValidators: true,
