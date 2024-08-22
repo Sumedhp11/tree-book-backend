@@ -107,8 +107,6 @@ const refreshAccessToken = async (req, res) => {
 
 const getAllTrees = async (req, res) => {
   try {
-    console.log(req.cookies, 130);
-
     const trees = await Trees.find();
     return res.status(200).json({
       success: true,
