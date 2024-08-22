@@ -125,14 +125,11 @@ const updateTree = async (req, res) => {
   try {
     const { treeId } = req.params;
     const { name, age, soil_type } = req.body;
-    console.log(req.body, 128);
 
     const updateData = {};
     if (name) updateData.name = name;
     if (age) updateData.age = age;
     if (soil_type) updateData.soil_type = soil_type;
-
-    console.log(updateData, 134);
 
     const updatedTree = await Trees.findByIdAndUpdate(treeId, updateData, {
       new: true,
@@ -221,12 +218,28 @@ const ChangeEditRequestStatus = async (req, res) => {
   }
 };
 
+const logoutAdmin = async (req, res) => {
+  try {
+    return res.status(200).cookie("refresh-token", "", { maxAge: 0 }).json({
+      success: true,
+      message: "Logout Succesfull",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+};
+
 export {
   Adminlogin,
   AdminRegister,
   refreshAccessToken,
   getAllTrees,
   updateTree,
+  logoutAdmin,
   getAllEditRequests,
   ChangeEditRequestStatus,
 };

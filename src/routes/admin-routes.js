@@ -7,6 +7,7 @@ import {
   updateTree,
   ChangeEditRequestStatus,
   refreshAccessToken,
+  logoutAdmin,
 } from "../controller/admin-controller.js";
 import { verifyAccessToken } from "../middleware/AuthMiddleware.js";
 
@@ -23,5 +24,6 @@ router.get("/get-all-trees", getAllTrees);
 router.patch("/update-tree/:treeId", updateTree);
 router.get("/edit-requests", getAllEditRequests);
 router.patch("/handle-edit-requests/:id", ChangeEditRequestStatus);
+router.get("/logout", logoutAdmin);
 
 export default router;
