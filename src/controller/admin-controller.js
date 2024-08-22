@@ -68,7 +68,6 @@ const Adminlogin = async (req, res) => {
 const refreshAccessToken = async (req, res) => {
   try {
     const refreshToken = req.cookies["refresh-token"];
-    console.log(refreshToken, 85);
 
     if (!refreshToken) {
       return res.status(401).json({

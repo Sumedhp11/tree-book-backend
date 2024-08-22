@@ -26,10 +26,6 @@ server.get("/", (_, res) => {
   res.send("Base url For Book Tree");
 });
 
-server.use((req, res, next) => {
-  console.log(req.cookies, 28);
-  next();
-});
 server.use("/api/trees", treesRoutes);
 server.use("/api/admin", adminRoutes);
 

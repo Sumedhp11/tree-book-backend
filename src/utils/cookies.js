@@ -9,7 +9,7 @@ const cookieOption = {
 };
 const sendToken = (res, user, code, message, refreshToken) => {
   const acessToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-    expiresIn: "15s",
+    expiresIn: "1hr",
   });
   return res
     .status(code)
