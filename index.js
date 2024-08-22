@@ -5,24 +5,29 @@ import { ConnectDb } from "./src/config/dbConfig.js";
 import treesRoutes from "./src/routes/tree-routes.js";
 import adminRoutes from "./src/routes/admin-routes.js";
 import cookieParser from "cookie-parser";
+import morgan from "morgan";
 configDotenv();
 ConnectDb();
 const server = express();
 const PORT = process.env.PORT || 8080;
 
+server.use(express.json());
+server.use(cookieParser());
 server.use(
   cors({
     origin: ["http://localhost:5173", "https://treebook.vercel.app"],
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   })
 );
-server.use(express.json());
-server.use(cookieParser());
+
+server.use(morgan("dev"));
 server.get("/", (_, res) => {
   res.send("Base url For Book Tree");
 });
+
 server.use((req, res, next) => {
-  console.log("Cookies: ", req.cookies);
+  console.log(req.cookies, 28);
   next();
 });
 server.use("/api/trees", treesRoutes);

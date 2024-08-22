@@ -4,6 +4,7 @@ import { configDotenv } from "dotenv";
 import jwt from "jsonwebtoken";
 import Trees from "../models/Trees-model.js";
 import EditRequest from "../models/EditRequests-model.js";
+import { sendToken } from "../utils/cookies.js";
 configDotenv();
 const AdminRegister = async (req, res) => {
   try {
@@ -51,30 +52,10 @@ const Adminlogin = async (req, res) => {
       expiresIn: "7d",
     });
 
-    const accessToken = jwt.sign({ id: admin._id }, process.env.JWT_SECRET, {
-      expiresIn: "15s",
-    });
-
     admin.refreshToken = refreshToken;
     await admin.save();
 
-    const isProduction = process.env.NODE_ENV === "production";
-    console.log(isProduction, 62);
-
-    return res
-      .status(200)
-      .cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: isProduction,
-        sameSite: isProduction ? "None" : "Lax",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-        path: "/",
-      })
-      .json({
-        success: true,
-        message: "Login successful",
-        token: accessToken,
-      });
+    sendToken(res, admin, 200, "Welcome Admin", refreshToken);
   } catch (error) {
     console.error(error);
     return res.status(500).json({
@@ -86,9 +67,8 @@ const Adminlogin = async (req, res) => {
 
 const refreshAccessToken = async (req, res) => {
   try {
-    const refreshToken = req.cookies["refreshToken"];
+    const refreshToken = req.cookies["refresh-token"];
     console.log(refreshToken, 85);
-    console.log(req.cookies, 86);
 
     if (!refreshToken) {
       return res.status(401).json({
