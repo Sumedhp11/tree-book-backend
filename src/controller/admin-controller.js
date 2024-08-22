@@ -125,6 +125,7 @@ const updateTree = async (req, res) => {
   try {
     const { treeId } = req.params;
     const { name, age, soil_type } = req.body;
+    console.log(req.body, 128);
 
     const updateData = {};
     if (name) updateData.name = name;
