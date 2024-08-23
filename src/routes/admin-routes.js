@@ -29,6 +29,6 @@ router.get("/edit-requests", getAllEditRequests);
 router.patch("/handle-edit-requests/:id", ChangeEditRequestStatus);
 router.post("/logout", logoutAdmin);
 router.post("/add-kb", addTreeKb);
-router.post("/get-all-kbs", upload.single("file"), getAllTreeKb);
+router.get("/get-all-kbs", getAllTreeKb);
 
 export default router;
