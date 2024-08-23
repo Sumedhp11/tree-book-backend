@@ -3,8 +3,10 @@ import TreeKb from "../models/TreeKb-model.js";
 const getTreeKbByname = async (req, res) => {
   const { treeName } = req.params;
   try {
+    const searchTerm = treeName.trim();
+
     const kbtree = await TreeKb.find({
-      commonName: { $regex: new RegExp(treeName, "i") },
+      commonName: { $regex: searchTerm, $options: "i" },
     });
     if (!kbtree) {
       return res.status(404).json({
