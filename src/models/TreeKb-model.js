@@ -41,6 +41,6 @@ const treeKBSchema = new mongoose.Schema({
     default: null,
   },
 });
-
+treeKBSchema.index({ commonName: "text" });
 const TreeKb = mongoose.model("Tree-KB", treeKBSchema);
 export default TreeKb;

@@ -6,14 +6,15 @@ const getTreeKbByname = async (req, res) => {
     const searchTerm = treeName.trim();
 
     const kbtree = await TreeKb.find({
-      commonName: { $regex: searchTerm, $options: "i" },
+      $text: { $search: searchTerm },
     });
-    if (!kbtree) {
+    if (!kbtree.length === 0) {
       return res.status(404).json({
         success: false,
         message: "Tree not found",
       });
     }
+
     return res.status(200).json({
       success: true,
       data: kbtree,
