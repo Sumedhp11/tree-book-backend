@@ -28,7 +28,7 @@ router.patch("/update-tree/:treeId", updateTree);
 router.get("/edit-requests", getAllEditRequests);
 router.patch("/handle-edit-requests/:id", ChangeEditRequestStatus);
 router.post("/logout", logoutAdmin);
-router.post("/add-kb", addTreeKb);
+router.post("/add-kb", upload.single("file"), addTreeKb);
 router.get("/get-all-kbs", getAllTreeKb);
 
 export default router;
