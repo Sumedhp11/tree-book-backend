@@ -6,6 +6,7 @@ import Trees from "../models/Trees-model.js";
 import EditRequest from "../models/EditRequests-model.js";
 import { sendToken } from "../utils/cookies.js";
 import TreeKb from "../models/TreeKb-model.js";
+import { uploadFileToCloudinary } from "../utils/cloudinary.js";
 configDotenv();
 const AdminRegister = async (req, res) => {
   try {
@@ -245,7 +246,6 @@ const logoutAdmin = async (req, res) => {
 const addTreeKb = async (req, res) => {
   try {
     const {
-      tree_image,
       uses,
       availability,
       survivalConditions,
@@ -254,9 +254,9 @@ const addTreeKb = async (req, res) => {
       commonName,
       scientificName,
     } = req.body;
-
+    const { url } = await uploadFileToCloudinary(req.file);
     const newTree = new TreeKb({
-      tree_image,
+      tree_image: url,
       uses,
       availability,
       survivalConditions,
