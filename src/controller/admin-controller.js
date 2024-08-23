@@ -220,18 +220,30 @@ const ChangeEditRequestStatus = async (req, res) => {
 
 const logoutAdmin = async (req, res) => {
   try {
-    return res.status(200).cookie("refresh-token", "", { maxAge: 0 }).json({
+    
+    res.clearCookie("refresh-token", {
+      httpOnly: true,
+      secure: true, 
+      sameSite: "strict",
+      path: "/", 
+    });
+
+    
+    return res.status(200).json({
       success: true,
-      message: "Logout Succesfull",
+      message: "Logout Successful",
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
+
+    
     return res.status(500).json({
       success: false,
       message: "Internal Server Error",
     });
   }
 };
+
 
 export {
   Adminlogin,
