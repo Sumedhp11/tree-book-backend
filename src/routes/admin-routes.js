@@ -1,21 +1,18 @@
 import { Router } from "express";
+import upload from "../config/multerConfig.js";
 import {
   AdminRegister,
   Adminlogin,
+  ChangeEditRequestStatus,
+  addTreeKb,
   getAllEditRequests,
   getAllTrees,
-  updateTree,
-  ChangeEditRequestStatus,
-  refreshAccessToken,
   logoutAdmin,
-  addTreeKb,
+  refreshAccessToken,
+  updateTree,
 } from "../controller/admin-controller.js";
+import { getAllTreeKb } from "../controller/TreeKb-controller.js";
 import { verifyAccessToken } from "../middleware/AuthMiddleware.js";
-import {
-  getAllTreeKb,
-  getTreeKbByname,
-} from "../controller/TreeKb-controller.js";
-import upload from "../config/multerConfig.js";
 
 const router = Router();
 
@@ -33,6 +30,5 @@ router.patch("/handle-edit-requests/:id", ChangeEditRequestStatus);
 router.post("/logout", logoutAdmin);
 router.post("/add-kb", upload.single("file"), addTreeKb);
 router.get("/get-all-kbs", getAllTreeKb);
-router.get("/getkb-by-name/:treeName", getTreeKbByname);
 
 export default router;
