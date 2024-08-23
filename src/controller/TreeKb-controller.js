@@ -6,7 +6,7 @@ const getTreeKbByname = async (req, res) => {
     const kbtree = await TreeKb.find({
       commonName: { $regex: new RegExp(treeName, "i") },
     });
-    if (!tree) {
+    if (!kbtree) {
       return res.status(404).json({
         success: false,
         message: "Tree not found",
