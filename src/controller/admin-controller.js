@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import Trees from "../models/Trees-model.js";
 import EditRequest from "../models/EditRequests-model.js";
 import { sendToken } from "../utils/cookies.js";
+import TreeKb from "../models/TreeKb-model.js";
 configDotenv();
 const AdminRegister = async (req, res) => {
   try {
@@ -220,15 +221,13 @@ const ChangeEditRequestStatus = async (req, res) => {
 
 const logoutAdmin = async (req, res) => {
   try {
-    
     res.clearCookie("refresh-token", {
       maxAge: 15 * 24 * 60 * 60 * 1000,
-  sameSite: "None",
-  httpOnly: true,
-  secure: true,
+      sameSite: "None",
+      httpOnly: true,
+      secure: true,
     });
 
-    
     return res.status(200).json({
       success: true,
       message: "Logout Successful",
@@ -236,7 +235,6 @@ const logoutAdmin = async (req, res) => {
   } catch (error) {
     console.error(error);
 
-    
     return res.status(500).json({
       success: false,
       message: "Internal Server Error",
@@ -244,6 +242,44 @@ const logoutAdmin = async (req, res) => {
   }
 };
 
+const addTreeKb = async (req, res) => {
+  try {
+    const {
+      tree_image,
+      uses,
+      availability,
+      survivalConditions,
+      physicalCharacteristics,
+      family,
+      commonName,
+      scientificName,
+    } = req.body;
+
+    const newTree = new TreeKb({
+      tree_image,
+      uses,
+      availability,
+      survivalConditions,
+      physicalCharacteristics,
+      family,
+      commonName,
+      scientificName,
+    });
+
+    const savedTree = await newTree.save();
+
+    res.status(201).json({
+      message: "Tree knowledge added successfully!",
+      data: savedTree,
+    });
+  } catch (error) {
+    console.error("Error adding tree knowledge:", error);
+    res.status(500).json({
+      message: "An error occurred while adding tree knowledge.",
+      error: error.message,
+    });
+  }
+};
 
 export {
   Adminlogin,
@@ -254,4 +290,6 @@ export {
   logoutAdmin,
   getAllEditRequests,
   ChangeEditRequestStatus,
+  addTreeKb,
+  
 };

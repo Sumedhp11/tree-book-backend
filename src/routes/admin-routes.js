@@ -8,8 +8,10 @@ import {
   ChangeEditRequestStatus,
   refreshAccessToken,
   logoutAdmin,
+  addTreeKb,
 } from "../controller/admin-controller.js";
 import { verifyAccessToken } from "../middleware/AuthMiddleware.js";
+import { getAllTreeKb } from "../controller/TreeKb-controller.js";
 
 const router = Router();
 
@@ -25,5 +27,7 @@ router.patch("/update-tree/:treeId", updateTree);
 router.get("/edit-requests", getAllEditRequests);
 router.patch("/handle-edit-requests/:id", ChangeEditRequestStatus);
 router.post("/logout", logoutAdmin);
+router.post("/add-kb", addTreeKb);
+router.post("/get-all-kbs", getAllTreeKb);
 
 export default router;
