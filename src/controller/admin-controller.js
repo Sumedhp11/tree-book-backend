@@ -222,10 +222,10 @@ const logoutAdmin = async (req, res) => {
   try {
     
     res.clearCookie("refresh-token", {
-      httpOnly: true,
-      secure: true, 
-      sameSite: "strict",
-      path: "/", 
+      maxAge: 15 * 24 * 60 * 60 * 1000,
+  sameSite: "None",
+  httpOnly: true,
+  secure: true,
     });
 
     
